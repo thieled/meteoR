@@ -1,0 +1,69 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# meteoR
+
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/thieled/meteoR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/thieled/meteoR/actions/workflows/R-CMD-check.yaml)
+<!-- badges: end -->
+
+meteoR is an unofficial R wrapper around the [OPTED Meteor API](https://meteor.opted.eu/).
+
+## Installation
+
+You can install the development version of meteoR from [GitHub](https://github.com/) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("thieled/meteoR")
+```
+
+## Example
+
+This is a basic example which shows you how to solve a common problem:
+
+```{r example}
+library(meteoR)
+
+# Get the country uid from the API
+countries <- call_meteor(method = "get",
+                            ressource = "query",
+                            type = "Country",
+                            format = "dataframe",
+                            n_max = Inf
+)
+
+
+countries_sel <- countries |> dplyr::filter(name %in% c("Austria",
+                                                        "Germany",
+                                                        "France",
+                                                        "Italy"))
+# Query the API for news sources from these countries
+news_sources <- call_meteor(method = "get",
+                            ressource = "query",
+                            type = "NewsSource",
+                            countries = countries_sel$uid,
+                            geographic_scope = c("national", "multinational"),
+                            format = "dataframe",
+                            publication_kind = c("newspaper", "magazine"),
+                            n_max = 50
+)
+
+
+dplyr::glimpse(news_sources)
+
+```
+
+
