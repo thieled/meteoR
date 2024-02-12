@@ -41,36 +41,61 @@ library(meteoR)
 countries <- call_meteor(method = "get",
                             ressource = "query",
                             type = "Country",
-                            format = "dataframe",
-                            n_max = Inf
+                            format = "dataframe"
 )
 
+channel <- call_meteor(method = "get",
+                            ressource = "query",
+                            type = "Channel",
+                            format = "dataframe"
+)
 
-countries_sel <- countries |> dplyr::filter(name %in% c("Austria",
-                                                        "Germany",
-                                                        "France",
-                                                        "Italy"))
+channel_website <-  dplyr::filter(channel, `_unique_name` == "website")
+
+countries_selection <- countries |> dplyr::filter(name %in% c("Austria",
+                                                        "Germany"))
+
 # Query the API for news sources from these countries
 news_sources <- call_meteor(method = "get",
                             ressource = "query",
                             type = "NewsSource",
-                            countries = countries_sel$uid,
-                            geographic_scope = c("national", "multinational"),
+                            countries = countries_selection$uid,
+                            channel = channel_website$uid,
+                            geographic_scope = c("national"),
                             format = "dataframe",
                             publication_kind = c("newspaper", "magazine"),
-                            n_max = 50
+                            n_max = 10, n = 10
 )
 
 
-dplyr::glimpse(news_sources)
-
-
 # Get more insights
-view_df <- view_uid(uid = head(news_sources)$uid, 
+view_df <- view_uid(uid = news_sources$uid, 
                     format = "dataframe",
                     unnest_cutoff = 1)
 
+
 dplyr::glimpse(view_df)
+
+
+
+# Get follower count from external API call:
+call_ws <- function(website
+  ){
+    r <- call_meteor(method = "post",
+                     ressource = "external",
+                     option = "website", 
+                     website = website,
+                     format = "raw"
+    )
+    return(r)
+  }
+
+# Apply 
+res <- pbapply::pblapply(head(view_df, 3)$identifier, FUN = call_ws)
+  
+res <- fleece::rectangularize(res)
+  
+dplyr::glimpse(res)
 
 
 ```
