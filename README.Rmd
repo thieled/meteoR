@@ -64,6 +64,15 @@ news_sources <- call_meteor(method = "get",
 
 dplyr::glimpse(news_sources)
 
+
+# Get more insights
+view_df <- view_uid(uid = head(news_sources)$uid, 
+                    format = "dataframe",
+                    unnest_cutoff = 1)
+
+dplyr::glimpse(view_df)
+
+
 ```
 
 
