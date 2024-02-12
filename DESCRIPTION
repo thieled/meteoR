@@ -12,7 +12,9 @@ RoxygenNote: 7.2.3
 Imports: 
     fleece (>= 0.0.1),
     httr,
-    purrr
+    pbapply,
+    purrr,
+    tibblify
 Remotes: 
     thieled/fleece
 Suggests: 
