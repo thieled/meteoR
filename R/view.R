@@ -23,8 +23,6 @@
 #'
 #' view_df <- view_uid(uid = news$uid, format = "dataframe", unnest_cutoff = 1)
 #'
-#' @importFrom pbapply pblapply
-#' @importFrom fleece rectangularize unnest_recursively
 #' @export
 view_uid <- function(uid,
                      format = c("raw", "dataframe"),
